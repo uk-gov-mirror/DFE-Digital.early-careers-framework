@@ -2,3 +2,28 @@ inherit_gem:
   rubocop-govuk:
     - config/default.yml
     - config/rails.yml
+
+AllCops:
+  Exclude:
+    - 'node_modules/**/*'
+    - 'bin/**/*'
+    - 'db/schema.rb'
+    - 'vendor/**/*'
+    - 'db/seeds/cip_*.rb'
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+Rails/UnknownEnv:
+  Environments:
+    - production
+    - development
+    - test
+    - deployed_development
+    - staging
+
+Naming/VariableNumber:
+  EnforcedStyle: snake_case

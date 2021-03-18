@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="govuk-template ">
   <head>
-    <title>GOV.UK Rails Boilerplate</title>
+    <title>Early careers framework</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= canonical_tag %>
@@ -14,16 +14,17 @@
     <%= favicon_link_tag asset_pack_path('media/images/govuk-apple-touch-icon-152x152.png'), rel: 'apple-touch-icon', type: 'image/png', size: '152x152' %>
     <%= favicon_link_tag asset_pack_path('media/images/govuk-apple-touch-icon-167x167.png'), rel: 'apple-touch-icon', type: 'image/png', size: '167x167' %>
     <%= favicon_link_tag asset_pack_path('media/images/govuk-apple-touch-icon-180x180.png'), rel: 'apple-touch-icon', type: 'image/png', size: '180x180' %>
-    <%= stylesheet_pack_tag 'application', 'data-turbolinks-track': 'reload', media: 'all' %>
-    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload', defer: true %>
+    <%= stylesheet_pack_tag 'application', media: 'all' %>
+    <%= javascript_pack_tag 'application', defer: true unless params[:nojs] === "nojs" %>
   </head>
 
   <body class="govuk-template__body ">
-    <script>
-      document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
-    </script>
 
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+
+    <% unless cookies[:cookie_consent_1] || current_page?(cookies_path) %>
+      <%= render "cookies/banner" %>
+    <% end %>
 
     <header class="govuk-header" role="banner" data-module="govuk-header">
       <div class="govuk-header__container govuk-width-container">
@@ -41,27 +42,66 @@
           <% end %>
         </div>
         <div class="govuk-header__content">
-          <%= link_to "GOV.UK Rails Boilerplate", "/", class: "govuk-header__link govuk-header__link--service-name" %>
+          <%= link_to "Early careers framework", "/", class: "govuk-header__link govuk-header__link--service-name" %>
           <button type="button" role="button" data-module="govuk-button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">Menu</button>
+          <% if user_signed_in? %>
           <nav>
             <ul id="navigation" class="govuk-header__navigation " aria-label="Top Level Navigation">
-              <li class="govuk-header__navigation-item govuk-header__navigation-item--active">
-                <%= link_to "Navigation item 1", "#", class: "govuk-header__link" %>
-              </li>
               <li class="govuk-header__navigation-item">
-                <%= link_to "Navigation item 2", "#", class: "govuk-header__link" %>
-              </li>
-              <li class="govuk-header__navigation-item">
-                <%= link_to "Navigation item 3", "#", class: "govuk-header__link" %>
+                <%= link_to "Logout", destroy_user_session_path, class: "govuk-header__link" %>
               </li>
             </ul>
           </nav>
+          <% end %>
         </div>
       </div>
     </header>
 
+    <%= yield(:nav_bar) %>
+
     <div class="govuk-width-container">
-      <main class="govuk-main-wrapper " id="main-content" role="main">
+      <div class="govuk-phase-banner app-phase-banner--no-border govuk-!-display-none-print">
+        <p class="govuk-phase-banner__content">
+          <strong class="govuk-tag govuk-phase-banner__content__tag ">
+            Development
+          </strong>
+          <span class="govuk-phase-banner__text">
+            This is a new service – your <%= render MailToSupportComponent.new("feedback") %> will help us to improve it.
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <div class="govuk-width-container">
+      <%= yield(:before_content) %>
+
+      <main class="govuk-main-wrapper govuk-body" id="main-content" role="main">
+        <% flash.each do |type, msg| %>
+          <% if type == "alert" %>
+            <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+              <h2 class="govuk-error-summary__title" id="error-summary-title">
+                <%= msg %>
+              </h2>
+            </div>
+          <% elsif type == "success" %>
+            <%= govuk_notification_banner(
+                  title: msg["title"],
+                  success: true,
+                  html_attributes: { data: { test: "notification-banner" } }
+                ) do |banner| %>
+              <% banner.add_heading(text: msg["heading"]) %>
+              <% msg["content"] %>
+            <% end %>
+          <% else %>
+            <div class="govuk-success-summary" aria-labelledby="success-message" tabindex="-1" role="alert">
+              <div class="govuk-success-summary__title">
+                <h2 class="govuk-heading-m" id="success-message">
+                  <%= msg %>
+                </h2>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
         <%= yield %>
       </main>
     </div>

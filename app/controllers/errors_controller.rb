@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ErrorsController < ApplicationController
   layout "application"
 
@@ -20,6 +22,13 @@ class ErrorsController < ApplicationController
     respond_to do |format|
       format.html { render status: :unprocessable_entity }
       format.json { render json: { error: "Unprocessable entity" }, status: :unprocessable_entity }
+    end
+  end
+
+  def forbidden
+    respond_to do |format|
+      format.html { render status: :forbidden }
+      format.json { render json: { error: "Forbidden" }, status: :forbidden }
     end
   end
 end

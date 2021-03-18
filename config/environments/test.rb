@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+require "active_support/core_ext/integer/time"
+
 # The test environment is used exclusively to run your application's
 # test suite. You never need to work with it otherwise. Remember that
 # your test database is "scratch space" for the test suite and is wiped
@@ -39,10 +43,32 @@ Rails.application.configure do
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
+  config.action_mailer.default_options = {
+    from: "mail@example.com",
+  }
+  config.domain = "www.example.com"
+
+  config.support_email = "ecf-support@example.com"
+
+  config.gias_api_schema = "https://www.example-gias.com"
+  config.gias_extract_id = 1234
+  config.gias_api_user = "gias-user"
+  config.gias_api_password = "gias-password"
+
+  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
+  # Raise exceptions for disallowed deprecations.
+  config.active_support.disallowed_deprecation = :raise
+
+  # Tell Active Support which deprecation messages to disallow.
+  config.active_support.disallowed_deprecation_warnings = []
+
   # Raises error for missing translations.
-  # config.action_view.raise_on_missing_translations = true
+  # config.i18n.raise_on_missing_translations = true
+
+  # Annotate rendered view with file names.
+  # config.action_view.annotate_rendered_view_with_filenames = true
 end

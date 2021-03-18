@@ -1,4 +1,4 @@
-class ApplicationMailer < ActionMailer::Base
-  default from: "from@example.com"
-  layout "mailer"
+# frozen_string_literal: true
+
+class ApplicationMailer < Mail::Notify::Mailer
 end
