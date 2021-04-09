@@ -18,7 +18,7 @@ Rails.application.configure do
 
   config.domain = ENV["DOMAIN"]
 
-  config.support_email = "ecf-support@digital.education.gov.uk"
+  config.support_email = "continuing-professional-development@digital.education.gov.uk"
 
   config.gias_api_schema = ENV["GIAS_API_SCHEMA"]
   config.gias_extract_id = ENV["GIAS_EXTRACT_ID"]
@@ -61,7 +61,7 @@ Rails.application.configure do
   end
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  # config.active_storage.service = :local # TODO enable when rails is upgraded
+  config.active_storage.service = :local
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

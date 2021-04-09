@@ -8,6 +8,8 @@ Given("scenario {string} has been run", (scenario) => cy.appScenario(scenario));
 const pagePaths = {
   cookie: "/cookies",
   start: "/",
+  privacy: "/privacy_policy",
+  "check account": "/check-account",
   "admin index": "/admin/administrators",
   "admin creation": "/admin/administrators/new",
   "admin confirm creation": "/admin/administrators/new/confirm",
@@ -21,6 +23,24 @@ const pagePaths = {
   "new delivery partner review": "/admin/suppliers/new/delivery-partner/review",
   "delivery partner edit": /\/delivery-partners\/.*\/edit/,
   "delivery partner delete": /\/delivery-partners\/.*\/delete/,
+  "users sign in": "/users/sign_in",
+  "resend nominations choose location": "nominations/choose-location",
+  "resend nominations choose school": "nominations/choose-school",
+  "resend nominations review": "nominations/review",
+  "resend nominations success": "nominations/success",
+  "resend nominations not eligible": "nominations/not-eligible",
+  "resend nominations already nominated": "nominations/already-nominated",
+  "resend nominations limit reached": "nominations/limit-reached",
+  "lead provider users index": "/admin/suppliers/users",
+  "new lead provider user": "/admin/suppliers/users/new",
+  "new lead provider user details": "/admin/suppliers/users/new/user-details",
+  "new lead provider user review": "/admin/suppliers/users/new/review",
+  "lead provider user delete": /\/lead-providers\/users\/.*\/delete/,
+  "choose programme": "/schools/choose-programme",
+  schools: "/schools",
+  "2021 school cohorts": "/schools/cohorts/2021",
+  "estimate participants": /\/schools\/estimate-participants\/.*\/edit/,
+  "2021 school partnerships": "/schools/cohorts/2021/partnerships",
 };
 
 Given("I am on {string} page", (page) => {
@@ -38,7 +58,7 @@ When("I navigate to {string} page", (page) => {
   cy.visit(path);
 });
 
-Then("I should be on {string} page", (page) => {
+const assertOnPage = (page) => {
   const path = pagePaths[page];
 
   if (!path) {
@@ -50,4 +70,12 @@ Then("I should be on {string} page", (page) => {
   } else {
     cy.location("pathname").should("match", path);
   }
+};
+
+Then("I should be on {string} page", (page) => {
+  assertOnPage(page);
+});
+
+Then("I should have been redirected to {string} page", (page) => {
+  assertOnPage(page);
 });

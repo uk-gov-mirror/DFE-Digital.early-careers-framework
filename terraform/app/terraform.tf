@@ -13,7 +13,11 @@ provider cloudfoundry {
   sso_passcode      = var.paas_sso_passcode != "" ? var.paas_sso_passcode : null
   store_tokens_path = "./tokens"
   user              = var.paas_user != "" ? var.paas_user : null
+}
 
+provider "statuscake" {
+  username = var.statuscake_username
+  apikey   = var.statuscake_apikey
 }
 
 /*
@@ -45,4 +49,13 @@ module paas {
   web_app_memory                    = var.paas_web_app_memory
   web_app_start_command             = var.paas_web_app_start_command
   logstash_url                      = var.logstash_url
+  govuk_hostnames                   = var.govuk_hostnames
+}
+
+module "statuscake" {
+  source = "./modules/statuscake"
+
+  environment       = var.environment
+  service_name      = local.service_name
+  statuscake_alerts = var.statuscake_alerts
 }

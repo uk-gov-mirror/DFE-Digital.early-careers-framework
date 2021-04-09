@@ -37,7 +37,7 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  # config.active_storage.service = :local # TODO enable when rails is upgraded
+  config.active_storage.service = :local
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
@@ -50,7 +50,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "govuk_rails_boilerplate_production"
   config.domain = ENV["DOMAIN"]
 
-  config.support_email = "ecf-support@digital.education.gov.uk"
+  config.support_email = "continuing-professional-development@digital.education.gov.uk"
 
   config.gias_api_schema = ENV["GIAS_API_SCHEMA"]
   config.gias_extract_id = ENV["GIAS_EXTRACT_ID"]

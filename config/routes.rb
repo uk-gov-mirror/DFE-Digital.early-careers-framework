@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  devise_for :users, skip: :registrations, controllers: {
+  devise_for :users, skip: %i[registrations confirmations], controllers: {
     sessions: "users/sessions",
-    confirmations: "users/confirmations",
   }
 
   devise_scope :user do
@@ -14,7 +13,11 @@ Rails.application.routes.draw do
   get "/pages/:page", to: "pages#show"
   get "check" => "application#check"
 
+  root "start#index"
+  get "/check-account", to: "check_account#show"
+
   resource :cookies, only: %i[show update]
+  resource :privacy_policy, only: %i[show]
   resource :dashboard, controller: :dashboard, only: :show
   resource :supplier_dashboard, controller: :supplier_dashboard, only: :show
   resource :school_invites, only: %i[show create]
@@ -25,27 +28,27 @@ Rails.application.routes.draw do
 
   scope path: "induction-programme", module: :induction_programme do
     resource :estimates, only: %i[show create]
-    resource :choices, only: %i[show create]
   end
 
   namespace :demo do
     resources :school_search, only: %i[index]
   end
 
-  namespace :registrations do
-    root to: "start#index"
-    resource :account_not_found, only: :show, controller: :account_not_found, path: "/account-not-found"
-    resource :question_one, only: %i[show create], controller: :question_one, path: "/question-one"
-    resource :question_two, only: %i[show create], controller: :question_two, path: "/question-two"
-    resource :no_decision, only: :show, controller: :no_decision, path: "/no-decision"
-    resource :learn_options, only: :show, controller: :learn_options, path: "/learn-options"
-    resource :no_participants, only: :show, controller: :no_participants, path: "/no-participants"
-    resource :school_profile, only: %i[show create], controller: :school_profile, path: "/school-profile"
-    resource :user_profile, only: %i[new create], controller: :user_profile, path: "/user-profile"
-    resource :verification_sent, only: :show, controller: :verification_sent, path: "/verification-sent"
-    resource :school_not_eligible, only: :show, controller: :school_not_eligible, path: "/school-not-eligible"
-    resource :school_registered, only: :show, controller: :school_registered, path: "/school-registered"
-    resource :school_not_confirmed, only: :show, controller: :school_not_confirmed, path: "/school-not-confirmed"
+  scope :nominations, module: :nominations do
+    resource :request_nomination_invite, controller: :request_nomination_invite, only: [], path: "/" do
+      collection do
+        get "choose-location", action: :choose_location
+        post "choose-location", action: :receive_location
+        get "choose-school", action: :choose_school
+        post "choose-school", action: :receive_school
+        get "review", action: :review
+        post "review", action: :create
+        get "success", action: :success
+        get "not-eligible", action: :not_eligible
+        get "limit-reached", action: :limit_reached
+        get "already-nominated", action: :already_nominated
+      end
+    end
   end
 
   namespace :lead_providers do
@@ -112,12 +115,23 @@ Rails.application.routes.draw do
     resources :induction_coordinators, only: %i[index edit update], path: "induction-coordinators"
   end
 
+  namespace :schools do
+    resource :dashboard, controller: :dashboard, only: :show, path: "/"
+    resource :choose_programme, controller: :choose_programme, only: %i[show create], path: "choose-programme"
+    resources :cohorts, only: :show do
+      resources :partnerships, only: :index
+      member do
+        get "legal"
+        get "add_participants"
+      end
+    end
+    resources :estimate_participants, only: %i[edit update], path: "estimate-participants"
+  end
+
   get "/403", to: "errors#forbidden", via: :all
   get "/404", to: "errors#not_found", via: :all
   get "/422", to: "errors#unprocessable_entity", via: :all
   get "/500", to: "errors#internal_server_error", via: :all
 
   resource :school_search, only: %i[show create], path: "school-search", controller: :school_search
-
-  root "registrations/start#index"
 end

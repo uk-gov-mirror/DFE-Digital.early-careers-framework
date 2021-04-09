@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe "Admin::Administrators::Administrators", type: :request do
+  let(:admin_path) { "admin/administrators/administrators" }
+
   let(:name) { Faker::Name.name }
   let(:email) { Faker::Internet.email }
   let(:new_user) { User.find_by(email: email) }
@@ -18,14 +20,14 @@ RSpec.describe "Admin::Administrators::Administrators", type: :request do
   describe "GET /admin/administrators" do
     it "renders the index template" do
       get "/admin/administrators"
-      expect(response).to render_template("admin/administrators/administrators/index")
+      expect(response).to render_template("#{admin_path}/index")
     end
   end
 
   describe "GET /admin/administrators/new" do
     it "renders the new template" do
       get "/admin/administrators/new"
-      expect(response).to render_template("admin/administrators/administrators/new")
+      expect(response).to render_template("#{admin_path}/new")
     end
 
     it "prefills fields when passed the continue parameter" do
@@ -51,7 +53,7 @@ RSpec.describe "Admin::Administrators::Administrators", type: :request do
     it "renders the confirmation template" do
       given_i_have_previously_submitted_values(name, email)
 
-      expect(response).to render_template("admin/administrators/administrators/confirm")
+      expect(response).to render_template("#{admin_path}/confirm")
     end
 
     it "shows an error when a field is blank" do
@@ -59,7 +61,7 @@ RSpec.describe "Admin::Administrators::Administrators", type: :request do
         full_name: name,
         email: "",
       } }
-      expect(response).to render_template("admin/administrators/administrators/new")
+      expect(response).to render_template("#{admin_path}/new")
       expect(response.body).to include("Enter an email")
     end
   end
@@ -71,12 +73,6 @@ RSpec.describe "Admin::Administrators::Administrators", type: :request do
 
     it "creates a new admin profile" do
       expect { create_new_user }.to change { AdminProfile.count }.by 1
-    end
-
-    it "confirms the new user" do
-      given_a_user_is_created
-
-      expect(new_user.confirmed?).to be true
     end
 
     it "makes the new user an admin" do
@@ -115,7 +111,7 @@ RSpec.describe "Admin::Administrators::Administrators", type: :request do
     it "renders the edit template" do
       get "/admin/administrators/#{admin.id}/edit"
 
-      expect(response).to render_template("admin/administrators/administrators/edit")
+      expect(response).to render_template("#{admin_path}/edit")
     end
   end
 
@@ -137,7 +133,7 @@ RSpec.describe "Admin::Administrators::Administrators", type: :request do
         }
 
         expect(response.body).to include("Enter an email")
-        expect(response).to render_template("admin/administrators/administrators/edit")
+        expect(response).to render_template("#{admin_path}/edit")
       end
     end
   end

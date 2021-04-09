@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_23_180540) do
+ActiveRecord::Schema.define(version: 2021_04_07_182348) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 2021_03_23_180540) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "start_year", limit: 2, null: false
+    t.index ["start_year"], name: "index_cohorts_on_start_year", unique: true
   end
 
   create_table "cohorts_lead_providers", id: false, force: :cascade do |t|
@@ -165,13 +166,28 @@ ActiveRecord::Schema.define(version: 2021_03_23_180540) do
     t.string "secondary_contact_email"
   end
 
+  create_table "nomination_emails", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "token", null: false
+    t.string "notify_status"
+    t.string "sent_to", null: false
+    t.datetime "sent_at"
+    t.datetime "opened_at"
+    t.uuid "school_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["school_id"], name: "index_nomination_emails_on_school_id"
+    t.index ["token"], name: "index_nomination_emails_on_token", unique: true
+  end
+
   create_table "partnerships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.uuid "school_id", null: false
     t.uuid "lead_provider_id", null: false
     t.uuid "cohort_id", null: false
+    t.uuid "delivery_partner_id"
     t.index ["cohort_id"], name: "index_partnerships_on_cohort_id"
+    t.index ["delivery_partner_id"], name: "index_partnerships_on_delivery_partner_id"
     t.index ["lead_provider_id"], name: "index_partnerships_on_lead_provider_id"
     t.index ["school_id"], name: "index_partnerships_on_school_id"
   end
@@ -200,7 +216,7 @@ ActiveRecord::Schema.define(version: 2021_03_23_180540) do
   end
 
   create_table "school_cohorts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "induction_programme_choice", default: "not_yet_known", null: false
+    t.string "induction_programme_choice", null: false
     t.uuid "school_id", null: false
     t.uuid "cohort_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -272,13 +288,9 @@ ActiveRecord::Schema.define(version: 2021_03_23_180540) do
     t.inet "current_sign_in_ip"
     t.inet "last_sign_in_ip"
     t.integer "sign_in_count", default: 0, null: false
-    t.string "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "discarded_at"
-    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
@@ -308,7 +320,9 @@ ActiveRecord::Schema.define(version: 2021_03_23_180540) do
   add_foreign_key "lead_provider_cips", "lead_providers"
   add_foreign_key "lead_provider_profiles", "lead_providers"
   add_foreign_key "lead_provider_profiles", "users"
+  add_foreign_key "nomination_emails", "schools"
   add_foreign_key "partnerships", "cohorts"
+  add_foreign_key "partnerships", "delivery_partners"
   add_foreign_key "partnerships", "lead_providers"
   add_foreign_key "partnerships", "schools"
   add_foreign_key "provider_relationships", "cohorts"
