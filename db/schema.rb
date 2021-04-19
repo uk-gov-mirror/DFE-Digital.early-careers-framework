@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_15_132713) do
+ActiveRecord::Schema.define(version: 2021_04_15_163231) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -176,6 +176,9 @@ ActiveRecord::Schema.define(version: 2021_04_15_132713) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.uuid "partnership_notification_email_id"
+    t.string "notify_id"
+    t.datetime "delivered_at"
+    t.index ["notify_id"], name: "index_nomination_emails_on_notify_id"
     t.index ["partnership_notification_email_id"], name: "index_nomination_emails_on_partnership_notification_email_id"
     t.index ["school_id"], name: "index_nomination_emails_on_school_id"
     t.index ["token"], name: "index_nomination_emails_on_token", unique: true
