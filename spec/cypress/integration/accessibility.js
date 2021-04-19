@@ -10,7 +10,7 @@ describe("Accessibility", () => {
 
     // School not registered page
     cy.get('[name="user[email]"]').type("doesntexist@example.com{enter}");
-    cy.titleShouldEqual("Check your email");
+    cy.titleShouldEqual("Check email");
     cy.checkA11y();
     cy.appSentEmails().then((emails) => {
       expect(emails).to.have.lengthOf(0);
@@ -24,7 +24,7 @@ describe("Accessibility", () => {
       });
 
     cy.get('[name="commit"]').contains("Sign in").click();
-    cy.titleShouldEqual("Check your email");
+    cy.titleShouldEqual("Check email");
     cy.checkA11y();
 
     cy.get("@userData").then(([user]) => {
@@ -44,12 +44,6 @@ describe("Accessibility", () => {
 
     cy.get('[action="/users/sign_in_with_token"] [name="commit"]').click();
     cy.get("h1").should("contain", "User dashboard");
-    cy.checkA11y();
-  });
-
-  it("Admin suppliers should be accessible", () => {
-    cy.login("admin");
-    cy.get("h1").should("contain", "Suppliers");
     cy.checkA11y();
   });
 });

@@ -13,12 +13,12 @@ RSpec.describe ApplicationHelper, type: :helper do
   end
 
   describe "#profile_dashboard_url" do
-    it "returns the admin/suppliers path for admins" do
-      expect(helper.profile_dashboard_url(admin_user)).to eq("http://test.host/admin/suppliers")
+    it "returns the admin/schools path for admins" do
+      expect(helper.profile_dashboard_url(admin_user)).to eq("http://test.host/admin/schools")
     end
 
     it "returns schools/choose-programme for induction coordinators" do
-      expect(helper.profile_dashboard_url(induction_coordinator)).to eq("http://test.host/schools/choose-programme")
+      expect(helper.profile_dashboard_url(induction_coordinator)).to eq("http://test.host/schools/choose-programme/advisory")
     end
 
     context "when a school has chosen a programme" do
